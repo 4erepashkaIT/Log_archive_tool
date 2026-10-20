@@ -15,7 +15,11 @@ if [ ! -d "$LOG_DIR" ]; then
     exit 1
 fi
 
+
 mkdir -p "$ARCHIVE_DIR"
+echo "Папка с архивами: $ARCHIVE_DIR"
+
+tar -czf "$ARCHIVE_DIR/$ARCHIVE_NAME" -C "$(dirname "$LOG_DIR")" "$(basename "$LOG_DIR")"
 
 echo "Папка с логами найдена: $LOG_DIR"
 echo "Имя архива: $ARCHIVE_NAME"
