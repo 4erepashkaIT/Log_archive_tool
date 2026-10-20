@@ -15,11 +15,15 @@ if [ ! -d "$LOG_DIR" ]; then
     exit 1
 fi
 
+echo "Папка с логами найдена: $LOG_DIR"
 
 mkdir -p "$ARCHIVE_DIR"
 echo "Папка с архивами: $ARCHIVE_DIR"
 
 tar -czf "$ARCHIVE_DIR/$ARCHIVE_NAME" -C "$(dirname "$LOG_DIR")" "$(basename "$LOG_DIR")"
 
-echo "Папка с логами найдена: $LOG_DIR"
 echo "Имя архива: $ARCHIVE_NAME"
+
+ARCHIVE_SIZE=$(stat -c%s "$ARCHIVE_DIR/$ARCHIVE_NAME")
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') | $LOG_DIR -> $ARCHIVE_NAME | Размер архива: $ARCHIVE_SIZE байт | OK" >> "$ARCHIVE_DIR/archive.log"
