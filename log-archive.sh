@@ -2,7 +2,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ARCHIVE_DIR="$HOME/projects/Log_archive_tool/archives"
+ARCHIVE_DIR="/var/log-archive"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 ARCHIVE_NAME="logs_archive_${TIMESTAMP}.tar.gz"
 
