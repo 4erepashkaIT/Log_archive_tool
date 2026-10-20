@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+ARCHIVE_NAME="logs_archive_${TIMESTAMP}.tar.gz"
+
 if [ $# -ne 1 ]; then
     echo "Использование: $0 <папка-с-логами>" >&2
     exit 1
@@ -13,3 +16,4 @@ if [ ! -d "$LOG_DIR" ]; then
 fi
 
 echo "Папка с логами найдена: $LOG_DIR"
+echo "Имя архива: $ARCHIVE_NAME"
