@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-ARCHIVE_DIR="$HOME/projects/Log_archive_tool"
+ARCHIVE_DIR="$HOME/projects/Log_archive_tool/archives"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 ARCHIVE_NAME="logs_archive_${TIMESTAMP}.tar.gz"
 
