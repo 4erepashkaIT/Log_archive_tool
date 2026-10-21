@@ -8,9 +8,19 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ARCHIVE_DIR="/var/log-archive"
+RETENTION_DAYS=7
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_TIME=$(date '+%Y-%m-%d %H:%M:%S')
 ARCHIVE_NAME="logs_archive_${TIMESTAMP}.tar.gz"
+
+cleanup_old_archives() {
+    DELETED_COUNT=$(find "$ARCHIVE_DIR" -maxdepth 1 -type f \
+        -name "logs_archive_*.tar.gz" \
+        -mtime +"$RETENTION_DAYS" \
+        -print -delete | wc -l)
+    echo "Удалено архивов старше $RETENTION_DAYS дней: $DELETED_COUNT"
+    echo "$LOG_TIME | Удалено архивов старше $RETENTION_DAYS дней: $DELETED_COUNT | OK" >> "$ARCHIVE_DIR/archive.log"
+}
 
 if [ $# -ne 1 ]; then
     echo "Использование: $0 <папка-с-логами>" >&2
@@ -39,18 +49,20 @@ if tar -czf "$ARCHIVE_DIR/$ARCHIVE_NAME" \
 
     echo "Архив успешно создан: $ARCHIVE_NAME"
 
-else
-    t_exit_code=$?
+    cleanup_old_archives()
 
-    if [ "$t_exit_code" -eq 1 ]; then
+else
+    T_EXIT_CODE=$?
+
+    if [ "$T_EXIT_CODE" -eq 1 ]; then
         ARCHIVE_SIZE=$(stat -c%s "$ARCHIVE_DIR/$ARCHIVE_NAME")
         echo "$LOG_TIME | $LOG_DIR -> $ARCHIVE_NAME | Размер архива: $ARCHIVE_SIZE байт | WARNING: файлы изменились при архивации" >> "$ARCHIVE_DIR/archive.log"
         echo "Предупреждение: файлы изменились при архивации (код 1). Архив сохранён: $ARCHIVE_NAME"
         exit 0
     else
         rm -f "$ARCHIVE_DIR/$ARCHIVE_NAME"
-        echo "$LOG_TIME | $LOG_DIR -> $ARCHIVE_NAME | Ошибка tar: код $t_exit_code | Неполный архив удалён" >> "$ARCHIVE_DIR/archive.log"
-        echo "Ошибка tar: код $t_exit_code. Неполный архив удалён: $ARCHIVE_NAME" >&2
-        exit "$t_exit_code"
+        echo "$LOG_TIME | $LOG_DIR -> $ARCHIVE_NAME | Ошибка tar: код $T_EXIT_CODE | Неполный архив удалён" >> "$ARCHIVE_DIR/archive.log"
+        echo "Ошибка tar: код $T_EXIT_CODE. Неполный архив удалён: $ARCHIVE_NAME" >&2
+        exit "$T_EXIT_CODE"
     fi
 fi
