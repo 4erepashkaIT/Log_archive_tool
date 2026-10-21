@@ -49,7 +49,7 @@ if tar -czf "$ARCHIVE_DIR/$ARCHIVE_NAME" \
 
     echo "Архив успешно создан: $ARCHIVE_NAME"
 
-    cleanup_old_archives()
+    cleanup_old_archives
 
 else
     T_EXIT_CODE=$?
@@ -58,6 +58,7 @@ else
         ARCHIVE_SIZE=$(stat -c%s "$ARCHIVE_DIR/$ARCHIVE_NAME")
         echo "$LOG_TIME | $LOG_DIR -> $ARCHIVE_NAME | Размер архива: $ARCHIVE_SIZE байт | WARNING: файлы изменились при архивации" >> "$ARCHIVE_DIR/archive.log"
         echo "Предупреждение: файлы изменились при архивации (код 1). Архив сохранён: $ARCHIVE_NAME"
+        cleanup_old_archives
         exit 0
     else
         rm -f "$ARCHIVE_DIR/$ARCHIVE_NAME"
